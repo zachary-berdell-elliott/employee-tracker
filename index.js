@@ -1,5 +1,11 @@
 const inquirer = require("inquirer");
 const mysql2 = require("mysql2");
+const connection = require("./lib/connection");
+
+
+connection.connect(() => {
+    mainScreen();
+})
 
 function mainScreen(){
     inquirer
@@ -62,7 +68,7 @@ function viewEmps(){
 }
 
 function updateEmp(){
-    
+
 }
 
 mainScreen();
