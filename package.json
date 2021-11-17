@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/zachary-berdell-elliott/employee-tracker.git"
   },
-  "author": "",
+  "author": "Zachary Elliott",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/zachary-berdell-elliott/employee-tracker/issues"
@@ -21,6 +21,6 @@
   "homepage": "https://github.com/zachary-berdell-elliott/employee-tracker#readme",
   "dependencies": {
     "inquirer": "^8.2.0",
-    "mysql2": "^2.3.3-rc.0"
+    "mysql2": "^2.3.3"
   }
 }
