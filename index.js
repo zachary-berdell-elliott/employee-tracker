@@ -48,11 +48,7 @@ function addDep(){
 }
 
 function viewDeps(){
-    connection.query("SELECT * FROM departments", function(err, res){
-        if(err) throw err;
-        console.table(res);
-        mainScreen();
-    })
+    viewTable("departments");
 }
 
 function addRole(){
@@ -61,11 +57,7 @@ function addRole(){
 }
 
 function viewRoles(){
-    connection.query("SELECT * FROM roles", function(err, res){
-        if(err) throw err;
-        console.table(res);
-        mainScreen();
-    })
+    viewTable("roles");
 }
 
 
@@ -106,11 +98,7 @@ function addEmp(){
 }
 
 function viewEmps(){
-    connection.query("SELECT * FROM employees", function(err, res){
-        if(err) throw err;
-        console.table(res);
-        mainScreen();
-    })
+    viewTable("employees");
 }
 
 
@@ -139,4 +127,12 @@ function updateEmp(){
             })
         })
     })
+}
+
+function viewTable(table){
+    connection.query(`SELECT * FROM ${table}`, function(err, res){
+        if(err) throw err;
+        console.table(res);
+        mainScreen();
+    });
 }
