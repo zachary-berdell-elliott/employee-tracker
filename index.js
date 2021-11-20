@@ -130,9 +130,18 @@ function updateEmp(){
 }
 
 function viewTable(table){
-    connection.query(`SELECT * FROM ${table}`, function(err, res){
+    connection.query("SELECT * FROM " + table, function(err, res){
         if(err) throw err;
         console.table(res);
-        mainScreen();
+        inquirer.prompt([{
+            type: "list",
+            name: "exit",
+            message: "Select exit when you are done viewing",
+            choices: ["exit"]
+        }]).then((response) => {
+            if (response.exit == "exit"){
+                mainScreen();
+            }
+        });  
     });
 }
