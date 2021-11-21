@@ -60,13 +60,25 @@ function addRole(){
                 message: "What is the name of this new role?"
             },
             {
+                type: "input",
+                name: "salaryVal",
+                message: "What is the salary of this new role?",
+                validate: (input) => {
+
+                }
+            },
+            {
                 type: "list",
                 name: "depId",
                 message: "what department does this new role belong to?",
                 choices: res.map(department => department.title)
             }
         ]).then((response) => {
-            
+            connection.query("INSERT INTO roles SET ?", {
+                title: response.roleName,
+                salary: response.salaryVal,
+                
+            })
         })
     })
 }
@@ -140,6 +152,7 @@ function viewTable(table){
     connection.query("SELECT * FROM " + table, function(err, res){
         if(err) throw err;
         console.table(res);
+        
         //Prompt to allow the user to exit the view to make a better interface
         inquirer.prompt([{
             type: "list",
