@@ -7,6 +7,7 @@ connection.connect(() => {
     mainScreen();
 })
 
+//Function that displays the primary screen and allows a user to select which action they would like to do
 function mainScreen(){
     inquirer
     .prompt([{
@@ -19,19 +20,19 @@ function mainScreen(){
             addDep();
         }
         else if (response.actionSelect == "View Departments"){
-            viewDeps();
+            viewTable("departments");
         }
         else if (response.actionSelect == "Add Role"){
             addRole();
         }
         else if (response.actionSelect == "View Roles"){
-            viewRoles();
+            viewTable("roles");
         }
         else if (response.actionSelect == "Add Employee"){
             addEmp();
         }
         else if (response.actionSelect == "View Employees"){
-            viewEmps();
+            viewTable("employees");
         }
         else if (response.actionSelect == "Update Employee Role"){
             updateEmp();
@@ -47,19 +48,28 @@ function addDep(){
     //Write inquirer question then INSERT INTO
 }
 
-function viewDeps(){
-    viewTable("departments");
-}
-
 function addRole(){
     //SELECT from departments
     //Ask question what is the title of the new role and what is the salary
+    connection.query("SELECT * FROM departments", (err, res) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "roleName",
+                message: "What is the name of this new role?"
+            },
+            {
+                type: "list",
+                name: "depId",
+                message: "what department does this new role belong to?",
+                choices: res.map(department => department.title)
+            }
+        ]).then((response) => {
+            
+        })
+    })
 }
-
-function viewRoles(){
-    viewTable("roles");
-}
-
 
 function addEmp(){
     connection.query("SELECT * FROM roles", function(err, res){
@@ -97,11 +107,6 @@ function addEmp(){
     })
 }
 
-function viewEmps(){
-    viewTable("employees");
-}
-
-
 function updateEmp(){
     connection.query("select * FROM employees", function(err, res){
         if (err) throw err;
@@ -129,10 +134,13 @@ function updateEmp(){
     })
 }
 
+//Function that allows a user to view a table with the data
 function viewTable(table){
+    //Selects the table that is provided as an argument and displays it in the console
     connection.query("SELECT * FROM " + table, function(err, res){
         if(err) throw err;
         console.table(res);
+        //Prompt to allow the user to exit the view to make a better interface
         inquirer.prompt([{
             type: "list",
             name: "exit",
