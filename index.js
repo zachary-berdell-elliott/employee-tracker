@@ -74,13 +74,14 @@ function addRole(){
                 choices: res.map(department => department.title)
             }
         ]).then((response) => {
+            const insertDepartment = res.find(department => department.title === response.depId);
             connection.query("INSERT INTO roles SET ?", {
                 title: response.roleName,
                 salary: response.salaryVal,
-                
-            })
-        })
-    })
+                department_id: insertDepartment.id
+            });
+        });
+    });
 }
 
 function addEmp(){
@@ -98,7 +99,7 @@ function addEmp(){
                 message: "What is the employees last name?"
             },
             {
-/*Will be similar to department id in add role function*/            name: "roleId",
+            name: "roleId",
             message: "What is role of the new employee",
             type: "list",
             choices: res.map( role => role.title)
