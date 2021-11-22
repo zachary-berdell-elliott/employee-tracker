@@ -46,6 +46,17 @@ function mainScreen(){
 
 function addDep(){
     //Write inquirer question then INSERT INTO
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "depName",
+            message: "What is the name of this new department?"
+        }
+    ]).then((response) => {
+        connection.query("INSERT INTO departments SET ?", {
+            name: response.depName
+        });
+    });
 }
 
 function addRole(){
