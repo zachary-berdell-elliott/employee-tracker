@@ -14,7 +14,7 @@ function mainScreen(){
         type: "list",
         name: "actionSelect",
         message: "What would you like to do?",
-        choices: ["Add Department", "View Departments", "Add Role", "View Roles", "Add Employee", "View Employees", "Update Employee Role", "Exit Program"]
+        choices: ["Add Department", "View Departments", "Delete Department", "Add Role", "View Roles", "Delete Role", "Add Employee", "View Employees", "Delete Employee", "Update Employee Role", "View By Department", "View By Manager", "Update Employee Manager", "Exit Program"]
     }]).then((response) => {
         if(response.actionSelect == "Add Department"){
             addDep();
@@ -22,11 +22,17 @@ function mainScreen(){
         else if (response.actionSelect == "View Departments"){
             viewTable("departments");
         }
+        else if (response.actionSelect == "Delete Department"){
+
+        }
         else if (response.actionSelect == "Add Role"){
             addRole();
         }
         else if (response.actionSelect == "View Roles"){
             viewTable("roles");
+        }
+        else if (response.actionSelect == "Delete Role"){
+
         }
         else if (response.actionSelect == "Add Employee"){
             addEmp();
@@ -34,8 +40,20 @@ function mainScreen(){
         else if (response.actionSelect == "View Employees"){
             viewTable("employees");
         }
+        else if (response.actionSelect == "Delete Employee"){
+
+        }
         else if (response.actionSelect == "Update Employee Role"){
             updateEmp();
+        }
+        else if (response.actionSelect == "View By Department"){
+            
+        }
+        else if (response.actionSelect == "View By Manager"){
+
+        }
+        else if (response.actionSelect == "Update Employee Manager"){
+
         }
         else {
             console.log("Come back later.");
@@ -56,6 +74,8 @@ function addDep(){
         connection.query("INSERT INTO departments SET ?", {
             name: response.depName
         });
+        console.log("Department added");
+        mainScreen();
     });
 }
 
@@ -151,6 +171,7 @@ function updateEmp(){
                 }]).then((response) => {
                     const selectedRole = res.find(role => role.title === response.newRole);
                     connection.query("UPDATE employees SET role_id = ? WHERE id = ?", [selectedRole.id, selectedEmployee.id]);
+                    console.log("Employee role updated successfully")
                     mainScreen();
                 })
             })
