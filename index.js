@@ -246,3 +246,75 @@ function delDep() {
         })
     })
 }
+
+//Deletes a role from the table
+function delRole() {
+    connection.query("SELECT * FROM roles", (err, res) => {
+        if (err) throw err;
+        inquirer.prompt([{
+            type: "list",
+            name: "roleToDel",
+            message: "Which role would you like to delete?",
+            choices: res.map(role => role.title)//.push("Cancel")
+        }]).then((response) => {
+            var roleToDelName = response.depToDel;
+            var roleToDel = res.find(role => role.title === response.roleToDel)
+            if (roleToDelName == "Cancel"){
+                mainScreen();
+            }
+            else{
+                inquirer.prompt([{
+                    type: "list",
+                    name: "delConfirmation",
+                    message: `Are you sure you would like to remove ${roleToDelName}`,
+                    choices: ["yes", "no"]
+                }]).then((response) => {
+                    if (response.delConfirmation == "no"){
+                        mainScreen();
+                    }
+                    else{
+                        connection.query("DELETE FROM roles WHERE id = ?", roleToDel.id);
+                        console.log("The role has been remove successfully");
+                        mainScreen();
+                    }
+                })
+            }
+        })
+    })
+}
+
+//Deletes an employee from the table
+function delEmp() {
+    connection.query("SELECT * FROM employees", (err, res) => {
+        if (err) throw err;
+        inquirer.prompt([{
+            type: "list",
+            name: "empToDel",
+            message: "Which employee would you like to delete?",
+            choices: res.map(employee => employee.first_name + " " + employee.last_name)//.push("Cancel")
+        }]).then((response) => {
+            var empToDelName = response.empToDel;
+            var empToDel = res.find(employee => employee.first_name + " " + employee.last_name === response.empToDel)
+            if (empToDelName == "Cancel"){
+                mainScreen();
+            }
+            else{
+                inquirer.prompt([{
+                    type: "list",
+                    name: "delConfirmation",
+                    message: `Are you sure you would like to remove ${empToDelName}`,
+                    choices: ["yes", "no"]
+                }]).then((response) => {
+                    if (response.delConfirmation == "no"){
+                        mainScreen();
+                    }
+                    else{
+                        connection.query("DELETE FROM employees WHERE id = ?", empToDel.id);
+                        console.log("The role has been remove successfully");
+                        mainScreen();
+                    }
+                })
+            }
+        })
+    })
+}
