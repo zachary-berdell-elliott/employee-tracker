@@ -1,9 +1,10 @@
+//Required modules
 const inquirer = require("inquirer");
 const mysql2 = require("mysql2");
 const { listenerCount } = require("./lib/connection");
 const connection = require("./lib/connection");
 
-
+//Initializes the SQL connection
 connection.connect(() => {
     mainScreen();
 })
@@ -17,6 +18,7 @@ function mainScreen(){
         message: "What would you like to do?",
         choices: ["Add Department", "View Departments", "Delete Department", "Add Role", "View Roles", "Delete Role", "Add Employee", "View Employees", "Delete Employee", "Update Employee Role", "View By Department", "View By Manager", "Update Employee Manager", "Exit Program"]
     }]).then((response) => {
+        //Runs the correct function for each option the user can select
         if(response.actionSelect == "Add Department"){
             addDep();
         }
@@ -63,8 +65,9 @@ function mainScreen(){
     });
 }
 
+//Adds departments
 function addDep(){
-    //Write inquirer question then INSERT INTO
+    //inquirer question for department name then INSERT INTO to add it to the table
     inquirer.prompt([
         {
             type: "input",
@@ -80,11 +83,12 @@ function addDep(){
     });
 }
 
+//Adds roles
 function addRole(){
-    //SELECT from departments
-    //Ask question what is the title of the new role and what is the salary
+    //Connection to department table to present user with a list of departments top add the role to
     connection.query("SELECT * FROM departments", (err, res) => {
         if (err) throw err;
+        //Prompts the user to enter the neccessary information
         inquirer.prompt([
             {
                 type: "input",
@@ -95,6 +99,7 @@ function addRole(){
                 type: "input",
                 name: "salaryVal",
                 message: "What is the salary of this new role?",
+                //Makes sure the salary is a valid number
                 validate: (input) => {
 
                 }
@@ -106,6 +111,7 @@ function addRole(){
                 choices: res.map(department => department.title)
             }
         ]).then((response) => {
+            //Adds the role to the table
             const insertDepartment = res.find(department => department.title === response.depId);
             connection.query("INSERT INTO roles SET ?", {
                 title: response.roleName,
@@ -116,7 +122,9 @@ function addRole(){
     });
 }
 
+//Adds employees
 function addEmp(){
+    //Connects to the roles table so the user can select a role
     connection.query("SELECT * FROM roles", function(err, res){
         if (err) throw err;
         inquirer.prompt([
@@ -137,6 +145,7 @@ function addEmp(){
             choices: res.map( role => role.title)
         },
 ]).then((response) => {
+        //Adds employee to the table
         const employeeRole = res.find(role => role.title === response.roleId);
         connection.query("INSERT INTO employees SET ?", {
             first_name: response.firstName,
@@ -152,6 +161,7 @@ function addEmp(){
     })
 }
 
+//Updates the role of an employee
 function updateEmp(){
     connection.query("select * FROM employees", function(err, res){
         if (err) throw err;
@@ -201,30 +211,38 @@ function viewTable(table){
     });
 }
 
+//Deletes a department from the table
 function delDep() {
-    inquirer.prompt([{
-        type: "list",
-        name: "depToDel",
-        message: "Which department would you like to delete?",
-        choices: res.map(department => department.title).push("Cancel")
-    }]).then((response) => {
-        var depToDelName = response.depToDel;
-        var depToDel = res.find(department => department.title === response.depToDel)
-        if (depToDelName == "Cancel"){
-            return mainScreen();
-        }
+    connection.query("SELECT * FROM departments", (err, res) => {
+        if (err) throw err;
         inquirer.prompt([{
             type: "list",
-            name: "delConfirmation",
-            message: `Are you sure you would like to remove ${depToDelName}`,
-            choices: ["yes", "no"]
+            name: "depToDel",
+            message: "Which department would you like to delete?",
+            choices: res.map(department => department.name)//.push("Cancel")
         }]).then((response) => {
-            if (response.delConfirmation == "yes"){
-                return mainScreen();
+            var depToDelName = response.depToDel;
+            var depToDel = res.find(department => department.name === response.depToDel)
+            if (depToDelName == "Cancel"){
+                mainScreen();
             }
-
-            connection.query("DELETE FROM departments WHERE id = ?", depToDel.id);
-            console.log("The department has been remove successfully");
+            else{
+                inquirer.prompt([{
+                    type: "list",
+                    name: "delConfirmation",
+                    message: `Are you sure you would like to remove ${depToDelName}`,
+                    choices: ["yes", "no"]
+                }]).then((response) => {
+                    if (response.delConfirmation == "no"){
+                        mainScreen();
+                    }
+                    else{
+                        connection.query("DELETE FROM departments WHERE id = ?", depToDel.id);
+                        console.log("The department has been remove successfully");
+                        mainScreen();
+                    }
+                })
+            }
         })
     })
 }
