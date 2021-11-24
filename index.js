@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const mysql2 = require("mysql2");
+const { listenerCount } = require("./lib/connection");
 const connection = require("./lib/connection");
 
 
@@ -23,7 +24,7 @@ function mainScreen(){
             viewTable("departments");
         }
         else if (response.actionSelect == "Delete Department"){
-
+            delDep();
         }
         else if (response.actionSelect == "Add Role"){
             addRole();
@@ -32,7 +33,7 @@ function mainScreen(){
             viewTable("roles");
         }
         else if (response.actionSelect == "Delete Role"){
-
+            delRole();
         }
         else if (response.actionSelect == "Add Employee"){
             addEmp();
@@ -41,7 +42,7 @@ function mainScreen(){
             viewTable("employees");
         }
         else if (response.actionSelect == "Delete Employee"){
-
+            delEmp();
         }
         else if (response.actionSelect == "Update Employee Role"){
             updateEmp();
@@ -198,4 +199,32 @@ function viewTable(table){
             }
         });  
     });
+}
+
+function delDep() {
+    inquirer.prompt([{
+        type: "list",
+        name: "depToDel",
+        message: "Which department would you like to delete?",
+        choices: res.map(department => department.title).push("Cancel")
+    }]).then((response) => {
+        var depToDelName = response.depToDel;
+        var depToDel = res.find(department => department.title === response.depToDel)
+        if (depToDelName == "Cancel"){
+            return mainScreen();
+        }
+        inquirer.prompt([{
+            type: "list",
+            name: "delConfirmation",
+            message: `Are you sure you would like to remove ${depToDelName}`,
+            choices: ["yes", "no"]
+        }]).then((response) => {
+            if (response.delConfirmation == "yes"){
+                return mainScreen();
+            }
+
+            connection.query("DELETE FROM departments WHERE id = ?", depToDel.id);
+            console.log("The department has been remove successfully");
+        })
+    })
 }
