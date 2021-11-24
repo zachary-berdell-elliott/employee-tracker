@@ -310,7 +310,7 @@ function delEmp() {
                     }
                     else{
                         connection.query("DELETE FROM employees WHERE id = ?", empToDel.id);
-                        console.log("The role has been remove successfully");
+                        console.log("The employee has been remove successfully");
                         mainScreen();
                     }
                 })
