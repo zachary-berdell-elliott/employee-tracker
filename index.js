@@ -50,10 +50,10 @@ function mainScreen(){
             updateEmp();
         }
         else if (response.actionSelect == "View By Department"){
-            
+            viewByDep();
         }
         else if (response.actionSelect == "View By Manager"){
-
+            viewByMan();
         }
         else if (response.actionSelect == "Update Employee Manager"){
 
@@ -315,6 +315,23 @@ function delEmp() {
                     }
                 })
             }
+        })
+    })
+}
+
+function viewByDep() {
+    connection.query("SELECT * FROM departments", (err, res) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "depToView",
+                message: "Which department would you like to view the employees for?",
+                choices: res.map(department => department.name)
+            }
+        ]).then((response) => {
+            var depToView = res.find(department => department.name === response.depToView);
+            
         })
     })
 }
