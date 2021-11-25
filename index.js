@@ -100,24 +100,25 @@ function addRole(){
                 name: "salaryVal",
                 message: "What is the salary of this new role?",
                 //Makes sure the salary is a valid number
-                validate: (input) => {
+               /* validate: (input) => {
 
-                }
+                } */
             },
             {
                 type: "list",
                 name: "depId",
                 message: "what department does this new role belong to?",
-                choices: res.map(department => department.title)
+                choices: res.map(department => department.name)
             }
         ]).then((response) => {
             //Adds the role to the table
-            const insertDepartment = res.find(department => department.title === response.depId);
+            const insertDepartment = res.find(department => department.name === response.depId);
             connection.query("INSERT INTO roles SET ?", {
                 title: response.roleName,
                 salary: response.salaryVal,
                 department_id: insertDepartment.id
             });
+            mainScreen();
         });
     });
 }
@@ -334,4 +335,8 @@ function viewByDep() {
             
         })
     })
+}
+
+function viewByMan() {
+
 }
