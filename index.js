@@ -118,6 +118,7 @@ function addRole(){
                 salary: response.salaryVal,
                 department_id: insertDepartment.id
             });
+            console.log("The role has been added.")
             mainScreen();
         });
     });
@@ -236,7 +237,7 @@ function delDep() {
             type: "list",
             name: "depToDel",
             message: "Which department would you like to delete?",
-            choices: res.map(department => department.name)//.push("Cancel")
+            choices: res.map(department => department.name)
         }]).then((response) => {
             var depToDelName = response.depToDel;
             var depToDel = res.find(department => department.name === response.depToDel)
@@ -251,6 +252,7 @@ function delDep() {
                     choices: ["yes", "no"]
                 }]).then((response) => {
                     if (response.delConfirmation == "no"){
+                        console.log("Operation Canceled")
                         mainScreen();
                     }
                     else{
@@ -274,7 +276,7 @@ function delRole() {
             message: "Which role would you like to delete?",
             choices: res.map(role => role.title)//.push("Cancel")
         }]).then((response) => {
-            var roleToDelName = response.depToDel;
+            var roleToDelName = response.roleToDel;
             var roleToDel = res.find(role => role.title === response.roleToDel)
             if (roleToDelName == "Cancel"){
                 mainScreen();
@@ -327,7 +329,7 @@ function delEmp() {
                     }
                     else{
                         connection.query("DELETE FROM employees WHERE id = ?", empToDel.id);
-                        console.log("The employee has been remove successfully");
+                        console.log("The employee has been removed successfully");
                         mainScreen();
                     }
                 })
