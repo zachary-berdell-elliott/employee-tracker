@@ -32,7 +32,7 @@ function mainScreen(){
             addRole();
         }
         else if (response.actionSelect == "View Roles"){
-            viewTable("SELECT roles.id, roles.title, roles.salary, departments.name AS department LEFT JOIN departments ON roles.department_id = departments.id");
+            viewTable("SELECT roles.id, roles.title, roles.salary, departments.name AS department FROM roles LEFT JOIN departments ON roles.department_id = departments.id");
         }
         else if (response.actionSelect == "Delete Role"){
             delRole();
@@ -332,7 +332,8 @@ function viewByDep() {
             }
         ]).then((response) => {
             var depToView = res.find(department => department.name === response.depToView);
-            
+            console.log(`now viewing employees for the ${depToView.name} department.`)
+            viewTable(`SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, CONCAT (manager.first_name, ' ', manager.last_name) AS manager FROM employees LEFT JOIN roles on employees.role_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id LEFT JOIN employees manager ON employees.manager_id = manager.id WHERE roles.department_id = ${depToView.id}`);
         })
     })
 }
@@ -352,7 +353,7 @@ function viewByMan() {
 
             console.log(`Now viewing employees that report to ${managerToView.first_name} ${managerToView.last_name}.`)
             //connection.query("SELECT * FROM employees WHERE manager_id = ?", managerToView.id);
-            viewTable(`employees WHERE manager_id = ${managerToView.id}`);
+            viewTable(`SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS department, roles.salary FROM employees LEFT JOIN roles on employees.role_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id WHERE manager_id = ${managerToView.id}`);
         })
     })
 }
