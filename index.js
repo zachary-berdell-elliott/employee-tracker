@@ -56,7 +56,7 @@ function mainScreen(){
             viewByMan();
         }
         else if (response.actionSelect == "Update Employee Manager"){
-
+            updateMan();
         }
         else {
             console.log("Come back later.");
@@ -338,5 +338,49 @@ function viewByDep() {
 }
 
 function viewByMan() {
+    connection.query("SELECT * FROM employees", (err, res) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "managerToView",
+                message: "Which employee would you like to see who reports to them?",
+                choices: res.map(employee => employee.first_name + " " + employee.last_name)
+            }
+        ]).then((response) => {
+            var managerToView = res.find(employee => employee.first_name + " " + employee.last_name === response.managerToView);
 
+            console.log(`Now viewing employees that report to ${managerToView.first_name} ${managerToView.last_name}.`)
+            //connection.query("SELECT * FROM employees WHERE manager_id = ?", managerToView.id);
+            viewTable(`employees WHERE manager_id = ${managerToView.id}`);
+        })
+    })
+}
+
+function updateMan() {
+    //Gets the employees
+    connection.query("SELECT * FROM employees", (err, res) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "empToUpdate",
+                message: "Which employee would you like to change the manager for?",
+                choices: res.map(employee => employee.first_name + " " + employee.last_name)
+            },
+            {
+                type: "list",
+                name: "newManager",
+                message: "Who is the employees new manager?",
+                choices: res.map(employee => employee.first_name + " " + employee.last_name)
+            }
+        ]).then((response) => {
+            var empToUpdate = res.find(employee => employee.first_name + " " + employee.last_name === response.empToUpdate);
+            var newManager = res.find(employee => employee.first_name + " " + employee.last_name === response.newManager);
+
+            connection.query("UPDATE employees SET manager_id = ? WHERE id = ?", [newManager.id, empToUpdate.id]);
+            console.log("The employees manager has been updated.");
+            mainScreen();
+        })
+    })
 }
