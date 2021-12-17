@@ -23,7 +23,7 @@ function mainScreen(){
             addDep();
         }
         else if (response.actionSelect == "View Departments"){
-            viewTable("departments");
+            viewTable("SELECT * FROM departments");
         }
         else if (response.actionSelect == "Delete Department"){
             delDep();
@@ -32,7 +32,7 @@ function mainScreen(){
             addRole();
         }
         else if (response.actionSelect == "View Roles"){
-            viewTable("roles");
+            viewTable("SELECT roles.id, roles.title, roles.salary, departments.name AS department LEFT JOIN departments ON roles.department_id = departments.id");
         }
         else if (response.actionSelect == "Delete Role"){
             delRole();
@@ -41,7 +41,7 @@ function mainScreen(){
             addEmp();
         }
         else if (response.actionSelect == "View Employees"){
-            viewTable("employees");
+            viewTable("SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS department, roles.salary, CONCAT (manager.first_name, ' ', manager.last_name) AS manager FROM employees LEFT JOIN roles on employees.role_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id LEFT JOIN employees manager ON employees.manager_id = manager.id");
         }
         else if (response.actionSelect == "Delete Employee"){
             delEmp();
@@ -194,7 +194,7 @@ function updateEmp(){
 //Function that allows a user to view a table with the data
 function viewTable(table){
     //Selects the table that is provided as an argument and displays it in the console
-    connection.query("SELECT * FROM " + table, function(err, res){
+    connection.query(table, function(err, res){
         if(err) throw err;
         console.table(res);
         
