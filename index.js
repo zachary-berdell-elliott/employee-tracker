@@ -126,7 +126,7 @@ function addRole(){
 //Adds employees
 function addEmp(){
     //Connects to the roles table so the user can select a role
-    connection.query("SELECT * FROM roles", function(err, res){
+    connection.query("SELECT * FROM roles", (err, res) => {
         if (err) throw err;
         inquirer.prompt([
             {
@@ -144,23 +144,39 @@ function addEmp(){
             message: "What is role of the new employee",
             type: "list",
             choices: res.map( role => role.title)
-        },
-]).then((response) => {
+            },
+    ]).then((response) => {
         //Adds employee to the table
+        const firstName = response.firstName;
+        const lastName = response.lastName;
         const employeeRole = res.find(role => role.title === response.roleId);
-        connection.query("INSERT INTO employees SET ?", {
-            first_name: response.firstName,
-            last_name: response.lastName,
-            role_id: employeeRole.id
-        },
-        
-        function(){
+
+        connection.query("SELECT * FROM employees", (err, res) => {
+            if (err) throw err;
+            inquirer.prompt([
+                {
+                    type: "list",
+                    name: "empMan",
+                    message: "Who is the employees manager?",
+                    choices: res.map(employee => employee.first_name + " " + employee.last_name),
+                },
+            ]).then((response) => {
+                const empMan = res.find(employee => employee.first_name + " " + employee.last_name === response.empMan);
+                connection.query("INSERT INTO employees SET ?", {
+                    first_name: firstName,
+                    last_name: lastName,
+                    role_id: employeeRole.id,
+                    manager_id: empMan.id,
+                }
+            );
             console.log("The employee has been added");
             mainScreen();
-        })
-    })
-    })
+        });
+        });
+    });
+    });
 }
+
 
 //Updates the role of an employee
 function updateEmp(){
