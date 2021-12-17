@@ -320,6 +320,7 @@ function delEmp() {
     })
 }
 
+//Function for viewing employees by department
 function viewByDep() {
     connection.query("SELECT * FROM departments", (err, res) => {
         if (err) throw err;
@@ -338,6 +339,7 @@ function viewByDep() {
     })
 }
 
+//Function for viewing employees by manager
 function viewByMan() {
     connection.query("SELECT * FROM employees", (err, res) => {
         if (err) throw err;
@@ -358,6 +360,7 @@ function viewByMan() {
     })
 }
 
+//Function for updating an employees manager
 function updateMan() {
     //Gets the employees
     connection.query("SELECT * FROM employees", (err, res) => {
